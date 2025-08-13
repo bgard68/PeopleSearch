@@ -2,7 +2,11 @@
 
 ## Overview
 
-PeopleSearch is a WinForms application built with a clean architecture approach, leveraging .NET 8, Entity Framework Core, and dependency injection for maintainable, testable code. Configuration and user messages are managed via `appsettings.json`, and database schema changes are handled through EF Core migrations.
+PeopleSearch is a WinForms application that exemplifies clean architecture principles. It leverages .NET 8, Entity Framework Core, and dependency injection to ensure maintainable and testable code. Configuration and user messages are managed via appsettings.json, with database schema changes handled by EF Core migrations. This project was primarily developed with AI, under my guidance, which managed documentation, analysis, troubleshooting, and code generation.
+
+With that said, I have not implemented Add/Save/Delete feature, Async methods, or implemented the 3NF person, address, city, state, zip tables but are included in the design.
+
+I asked AI, once I was satisfied with the database schema, to generate Entities based off of that schema.
 
 ---
 
@@ -93,3 +97,4 @@ For further details, see the code comments and referenced files in each layer.
 ## Database Setup
 
 For instructions on setting up and updating the database outside the application, see [Infrastructure/SETUP_DATABASE.md](Infrastructure/SETUP_DATABASE.md).
+
