@@ -59,6 +59,9 @@ PeopleSearch is a WinForms application built with .NET 8, following clean archit
 - EF Core migrations are used to manage schema changes.
 - The database is created and updated at startup using migrations.
 
+Back to Solution Overview
+Return to the main solution overview: PeopleSearch/README.md
+
 ---
 
 ## Summary
