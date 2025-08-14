@@ -96,7 +96,7 @@ For instructions on setting up and updating the database outside the application
 
 ## Overall Analysis
 
-For analysis overview, see [AnalysisREADME.md](../AnalysisREADME.md)
+For analysis overview, see [AnalysisReadMe.md](../AnalysisReadMe.md)
 
 ## Back to Solution Overview
 
