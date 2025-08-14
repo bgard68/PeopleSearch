@@ -98,5 +98,6 @@ For further details, see the code comments and referenced files in each layer.
 
 For instructions on setting up and updating the database outside the application, see [Infrastructure/SETUP_DATABASE.md](Infrastructure/SETUP_DATABASE.md).
 
-
+## Analysis Overview
+For anlaysis overview, see [Solution Architecture & Layer Dependency Analysis](AnalysisReadMe.md)
 
