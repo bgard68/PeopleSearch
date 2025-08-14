@@ -93,3 +93,12 @@ For further details, see the code comments and referenced files in each layer.
 ## Database Setup
 
 For instructions on setting up and updating the database outside the application, see [Infrastructure/SETUP_DATABASE.md](Infrastructure/SETUP_DATABASE.md).
+
+## Overall Analysis
+
+[Analysis.md/README.md](../README.md)
+
+## Back to Solution Overview
+
+Return to the main solution overview: [PeopleSearch/README.md](../README.md)
+
