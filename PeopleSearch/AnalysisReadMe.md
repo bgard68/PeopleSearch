@@ -71,5 +71,8 @@ Return to the main solution overview: PeopleSearch/README.md
 
 For further details, see the code comments and referenced files in each layer.
 
-Back to Solution Overview
-Return to the main solution overview: PeopleSearch/README.md
+---
+
+## Back to Solution Overview
+
+Return to the main solution overview: [PeopleSearch/README.md](../README.md)
