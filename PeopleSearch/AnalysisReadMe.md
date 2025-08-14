@@ -70,3 +70,6 @@ Return to the main solution overview: PeopleSearch/README.md
 - The solution adheres to clean architecture principles, ensuring maintainability, testability, and separation of concerns.
 
 For further details, see the code comments and referenced files in each layer.
+
+Back to Solution Overview
+Return to the main solution overview: PeopleSearch/README.md
