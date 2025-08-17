@@ -1,6 +1,6 @@
-using Domain.Interface;
-using Domain.Entities;
 using Application.Interfaces;
+using Application.DTOs;
+using Application.Mapping;
 
 namespace Application.Services
 {
@@ -8,37 +8,50 @@ namespace Application.Services
     {
         private readonly IPeopleRepository _peopleRepository;
         private readonly IAddressService _addressService;
+        private readonly IAddressRepository _addressRepository;
 
-        public PeopleService(IPeopleRepository peopleRepository, IAddressService addressService)
+        public PeopleService(IPeopleRepository peopleRepository, IAddressService addressService, IAddressRepository addressRepository)
         {
             _peopleRepository = peopleRepository;
             _addressService = addressService;
+            _addressRepository = addressRepository;
         }
 
-        public IEnumerable<Person> Search(string firstName, string mi, string lastName)
+        public IEnumerable<PersonDto> Search(string firstName, string mi, string lastName)
         {
-            return _peopleRepository.Search(firstName, mi, lastName);
+            var people = _peopleRepository.Search(firstName, mi, lastName);
+            return people.Select(PersonMapping.ToDto).ToList();
         }
 
-        public Person? GetById(int id)
+        public PersonDto? GetById(int id)
         {
-            return _peopleRepository.GetById(id);
+            var person = _peopleRepository.GetById(id);
+            return person != null ? PersonMapping.ToDto(person) : null;
         }
 
-        public IEnumerable<Person> GetAllPeople()
+        public IEnumerable<PersonDto> GetAllPeople()
         {
-            return _peopleRepository.GetAllPeople();
+            var people = _peopleRepository.GetAllPeople();
+            return people.Select(PersonMapping.ToDto).ToList();
         }
-        public (bool Success, string Message) AddPerson(Person person)
+
+        public (bool Success, string Message) AddPerson(PersonDto personDto)
         {
+
+            // Get the tracked Address entity from the repository
+            var trackedAddress = _addressRepository.GetAddressById(personDto.AddressId);
+            if (trackedAddress == null)
+                return (false, "Address not found.");
+
+            var person = PersonMapping.ToEntity(personDto, trackedAddress);
             if (string.IsNullOrWhiteSpace(person.FirstName) ||
-        string.IsNullOrWhiteSpace(person.LastName) ||
-        string.IsNullOrWhiteSpace(person.Email) ||
-        person.AddressId == 0 ||
-        string.IsNullOrWhiteSpace(person.PhoneNumber) ||
-        person.Address == null ||
-        string.IsNullOrWhiteSpace(person.Address.City) ||
-        string.IsNullOrWhiteSpace(person.Address.ZipCode))
+                string.IsNullOrWhiteSpace(person.LastName) ||
+                string.IsNullOrWhiteSpace(person.Email) ||
+                person.AddressId == 0 ||
+                string.IsNullOrWhiteSpace(person.PhoneNumber) ||
+                person.Address == null ||
+                string.IsNullOrWhiteSpace(person.Address.City) ||
+                string.IsNullOrWhiteSpace(person.Address.ZipCode))
             {
                 return (false, "All required fields must be provided.");
             }
@@ -46,8 +59,10 @@ namespace Application.Services
             return (true, "Person added successfully.");
         }
 
-        public void UpdatePerson(Person person)
+        public void UpdatePerson(PersonDto personDto)
         {
+            var trackedAddress = _addressRepository.GetAddressById(personDto.AddressId);
+            var person = PersonMapping.ToEntity(personDto, trackedAddress);
             _peopleRepository.Update(person);
         }
 

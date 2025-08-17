@@ -1,10 +1,8 @@
+using Application.DTOs;
 using Application.Interfaces;
-using Application.Services;
-using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -73,8 +71,8 @@ namespace PeopleSearch
             dataGridViewResults.Columns["Email"].DataPropertyName = "Email";
             dataGridViewResults.Columns["StreetAddress"].DataPropertyName = "Address.StreetAddress";
             dataGridViewResults.Columns["City"].DataPropertyName = "Address.City";
-            dataGridViewResults.Columns["ZipCode"].DataPropertyName = "Address.ZipCode";
-            dataGridViewResults.Columns["StateAbbr"].DataPropertyName = "Address.State.StateAbbr";
+            dataGridViewResults.Columns["ZipCode"].DataPropertyName = "AddressDto.ZipCode";
+            dataGridViewResults.Columns["StateAbbr"].DataPropertyName = "AddressDto.State.StateAbbr";
 
             // Make columns fill available space
             foreach (DataGridViewColumn column in dataGridViewResults.Columns)
@@ -157,7 +155,7 @@ namespace PeopleSearch
             if (e.RowIndex >= 0)
             {
                 var row = dataGridViewResults.Rows[e.RowIndex];
-                var person = row.DataBoundItem as Person;
+                var person = row.DataBoundItem as PersonDto;
                 if (person != null)
                 {
                     DisplayFields(person);
@@ -170,7 +168,7 @@ namespace PeopleSearch
         /// </summary>
         private void dataGridViewResults_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            var person = dataGridViewResults.Rows[e.RowIndex].DataBoundItem as Person;
+            var person = dataGridViewResults.Rows[e.RowIndex].DataBoundItem as PersonDto;
             if (person == null) return;
 
             var columnName = dataGridViewResults.Columns[e.ColumnIndex].Name;
@@ -234,7 +232,7 @@ namespace PeopleSearch
                 MessageBox.Show(_messages.NoSearchCriteria, "Search", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 var allPeople = _peopleService.GetAllPeople().ToList();
-                dataGridViewResults.DataSource = new BindingList<Person>(allPeople);
+                dataGridViewResults.DataSource = new BindingList<PersonDto>(allPeople);
                 return;
             }
 
@@ -245,7 +243,7 @@ namespace PeopleSearch
                 MessageBox.Show(_messages.NoMatchingRecords, "Search Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
-            dataGridViewResults.DataSource = new BindingList<Person>(results);
+            dataGridViewResults.DataSource = new BindingList<PersonDto>(results);
         }
 
         /// <summary>
@@ -294,7 +292,7 @@ namespace PeopleSearch
             }
 
             // Create and add the person
-            var newPerson = new Person
+            var newPerson = new PersonDto
             {
                 FirstName = firstName,
                 MI = mi,
@@ -567,7 +565,7 @@ namespace PeopleSearch
         /// <summary>
         /// Populates form fields with the selected person's data.
         /// </summary>
-        private void DisplayFields(Person person)
+        private void DisplayFields(PersonDto person)
         {
             textBoxFirstName.Text = person.FirstName;
             textBoxMI.Text = person.MI;
@@ -576,7 +574,7 @@ namespace PeopleSearch
             maskedTextBoxCellNumber.Text = person.CellNumber;
             textBoxEmail.Text = person.Email;
 
-            Address address = person.Address;
+            AddressDto address = person.Address;
             if (address == null && person.AddressId != 0)
             {
                 address = _addressService.GetAddressById(person.AddressId);
@@ -593,7 +591,7 @@ namespace PeopleSearch
                 {
                     for (int i = 0; i < comboBoxState.Items.Count; i++)
                     {
-                        var item = comboBoxState.Items[i] as State;
+                        var item = comboBoxState.Items[i] as StateDto;
                         if (item != null && item.StateId == state.StateId)
                         {
                             comboBoxState.SelectedIndex = i;
@@ -650,7 +648,7 @@ namespace PeopleSearch
                     Debug.WriteLine($"{person.PersonId}: {person.Address?.StreetAddress}, {person.Address?.State?.StateAbbr}");
                 }
             }
-            dataGridViewResults.DataSource = new BindingList<Person>(allPeople);
+            dataGridViewResults.DataSource = new BindingList<PersonDto>(allPeople);
         }
 
         /// <summary>
@@ -670,7 +668,7 @@ namespace PeopleSearch
         /// <summary>
         /// Finds an existing address or creates a new one.
         /// </summary>
-        private Address? GetOrCreateAddress(string streetAddress, string city, int stateId, string zipCode)
+        private AddressDto? GetOrCreateAddress(string streetAddress, string city, int stateId, string zipCode)
         {
             var existingAddresses = _addressService.SearchAddress(streetAddress, city, stateId, zipCode).ToList();
             if (existingAddresses.Any())
@@ -678,7 +676,7 @@ namespace PeopleSearch
                 return existingAddresses.First();
             }
 
-            var newAddress = new Address
+            var newAddress = new AddressDto
             {
                 StreetAddress = streetAddress,
                 City = city,

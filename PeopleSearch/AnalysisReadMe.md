@@ -1,77 +1,111 @@
-﻿# PeopleSearch Application
+﻿# Solution Architecture Overview
 
-## Solution Architecture & Layer Dependency Analysis
+## Clean Architecture Analysis
 
-PeopleSearch is a WinForms application built with .NET 8, following clean architecture principles. The solution is organized into four main layers, each with clear responsibilities and dependencies:
-
----
-
-### Layer Overview
-
-| Layer           | References Domain | References Application | References Infrastructure | Status      |
-|-----------------|------------------|-----------------------|--------------------------|-------------|
-| **Domain**      | ✅                | ❌                    | ❌                       | Correct     |
-| **Application** | ✅                | ✅                    | ❌                       | Correct     |
-| **Infrastructure** | ✅             | ❌                    | ✅ (itself)               | Correct     |
-| **UI (WinForms)** | ✅ (via App)    | ✅                    | ❌                       | Correct     |
+This solution follows Clean Architecture principles, ensuring separation of concerns, maintainability, and testability. Below is an overview of the project structure, dependencies, and key practices.
 
 ---
 
-### Layer Details
+## Project Structure
 
-- **Domain Layer**
-  - Contains core business entities (`Person`) and interfaces (`IPerson`, `IPeopleRepository`).
-  - Only references other domain types.
-  - No improper references.
+### 1. **Domain Layer**
+- **Purpose:** Contains core business entities and interfaces.
+- **Contents:**  
+  - Entities: `Person`, `Address`, `State`
+  - Repository interfaces: `IPeopleRepository`, `IAddressRepository`, `IStateRepository`
+- **Dependencies:**  
+  - No dependencies on other layers.
+- **Best Practice:**  
+  - No DTOs, mapping, or infrastructure references.
 
-- **Application Layer**
-  - Contains service interfaces (`IPeopleService`) and implementations (`PeopleService`).
-  - Depends on domain abstractions (`IPeopleRepository`), not on infrastructure or EF Core directly.
-  - No improper references.
+### 2. **Infrastructure Layer**
+- **Purpose:** Implements data access and external integrations.
+- **Contents:**  
+  - EF Core `AppDbContext`
+  - Repository implementations: `PeopleRepository`, `AddressRepository`, `StateRepository`
+- **Dependencies:**  
+  - References Domain entities and interfaces.
+- **Best Practice:**  
+  - No references to DTOs or application services.
 
-- **Infrastructure Layer**
-  - Contains data access logic (`AppDbContext`, `PersonRepository`).
-  - Implements domain interfaces and uses domain entities.
-  - No improper references.
+### 3. **Application Layer**
+- **Purpose:** Contains business logic, service interfaces, DTOs, and mapping.
+- **Contents:**  
+  - Service interfaces: `IPeopleService`, `IAddressService`, `IStateService`
+  - Service implementations: `PeopleService`, `AddressService`, `StateService`
+  - DTOs: `PersonDto`, `AddressDto`, `StateDto`
+  - Mapping classes: `PersonMapping`, `AddressMapping`, `StateMapping`
+- **Dependencies:**  
+  - References Domain entities and interfaces.
+- **Best Practice:**  
+  - Maps between domain entities and DTOs.
+  - No references to infrastructure implementations.
 
-- **UI Layer (WinForms)**
-  - Uses dependency injection to resolve `IPeopleService` and passes it to the form.
-  - Does not directly interact with `AppDbContext` or repositories.
-  - No improper references.
+### 4. **UI Layer (PeopleSearch)**
+- **Purpose:** User interface (WinForms).
+- **Contents:**  
+  - Forms: `Form1.cs`
+  - Program entry: `Program.cs`
+- **Dependencies:**  
+  - References Application interfaces and DTOs.
+- **Best Practice:**  
+  - No direct references to domain entities or infrastructure.
+  - All data binding and service calls use DTOs.
 
 ---
 
-### Dependency Injection
+## Key Clean Architecture Practices
 
-- All services, including `IPeopleService`, `IPeopleRepository`, and `AppDbContext`, are registered in the DI container in `Program.cs`.
-- The main form (`Form1`) receives its dependencies via constructor injection, ensuring decoupling from data access and infrastructure.
+- **Dependency Rule:**  
+  - Inner layers (Domain, Application) do not depend on outer layers (Infrastructure, UI).
+- **DTO Usage:**  
+  - UI and Application layers use DTOs for data transfer.
+  - Repositories and Domain use only domain entities.
+- **Mapping:**  
+  - Mapping between entities and DTOs is handled in the Application layer.
+- **Service Registration:**  
+  - Dependency Injection is used in `Program.cs` to register interfaces and implementations.
+- **Error Handling:**  
+  - Robust error handling in data import and service layers.
 
 ---
 
-### Configuration
+## Example Dependency Flow
 
-- Application configuration (connection strings, messages) is managed via `appsettings.json`.
+UI (PeopleSearch) | v Application (Services, DTOs, Mapping) | v Domain (Entities, Interfaces) ^ | Infrastructure (Repositories, DbContext)
 
 ---
 
-### Database Migrations
+## How to Extend or Maintain
 
-- EF Core migrations are used to manage schema changes.
-- The database is created and updated at startup using migrations.
+- **Add new features:**  
+  - Define new entities and interfaces in Domain.
+  - Implement repositories in Infrastructure.
+  - Add DTOs, mapping, and services in Application.
+  - Update UI to use new DTOs and service interfaces.
+- **Testing:**  
+  - Test business logic in Application layer.
+  - Mock repositories for unit tests.
 
-Back to Solution Overview
-Return to the main solution overview: PeopleSearch/README.md
+---
+
+## Common Pitfalls to Avoid
+
+- Do **not** reference domain entities in the UI layer.
+- Do **not** use DTOs in repositories or domain entities.
+- Do **not** reference infrastructure in the Application or Domain layers.
 
 ---
 
 ## Summary
 
-- **No layer references something it shouldn’t.**
-- The solution adheres to clean architecture principles, ensuring maintainability, testability, and separation of concerns.
+This solution is structured for clean architecture.  
+- **UI** interacts with **Application** via DTOs and interfaces.
+- **Application** maps DTOs to domain entities and calls repositories.
+- **Infrastructure** implements repositories and data access.
+- **Domain** contains only core business logic and contracts.
 
-For further details, see the code comments and referenced files in each layer.
-
----
+**Follow this structure for maintainable, scalable, and testable software.**
 
 ## Back to Solution Overview
 
