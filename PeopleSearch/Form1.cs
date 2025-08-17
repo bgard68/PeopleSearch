@@ -69,8 +69,8 @@ namespace PeopleSearch
             dataGridViewResults.Columns["PhoneNumber"].DataPropertyName = "PhoneNumber";
             dataGridViewResults.Columns["CellNumber"].DataPropertyName = "CellNumber";
             dataGridViewResults.Columns["Email"].DataPropertyName = "Email";
-            dataGridViewResults.Columns["StreetAddress"].DataPropertyName = "Address.StreetAddress";
-            dataGridViewResults.Columns["City"].DataPropertyName = "Address.City";
+            dataGridViewResults.Columns["StreetAddress"].DataPropertyName = "AddressDto.StreetAddress";
+            dataGridViewResults.Columns["City"].DataPropertyName = "AddressDto.City";
             dataGridViewResults.Columns["ZipCode"].DataPropertyName = "AddressDto.ZipCode";
             dataGridViewResults.Columns["StateAbbr"].DataPropertyName = "AddressDto.State.StateAbbr";
 
