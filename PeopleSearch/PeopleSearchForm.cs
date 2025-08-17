@@ -152,7 +152,6 @@ namespace PeopleSearch
             {
                 e.Cancel = true;
             }
-            base.OnFormClosing(e);
                 return;
             }
             base.OnFormClosing(e);
