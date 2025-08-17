@@ -32,6 +32,7 @@ namespace PeopleSearch
             _peopleService = peopleService;
             _addressService = addressService;
             InitializeComponent();
+            dataGridViewResults.TabStop = false;
 
             // Format DataGridView cells for display
             dataGridViewResults.CellFormatting += dataGridViewResults_CellFormatting;
