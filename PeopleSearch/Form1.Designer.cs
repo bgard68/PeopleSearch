@@ -65,7 +65,7 @@
             labelPhoneNumber.Location = new Point(317, 96);
             labelPhoneNumber.Name = "labelPhoneNumber";
             labelPhoneNumber.Size = new Size(119, 21);
-            labelPhoneNumber.TabIndex = 3;
+            labelPhoneNumber.TabIndex = 0;
             labelPhoneNumber.Text = "Phone Number:";
             // 
             // labelCellNumber
@@ -74,7 +74,7 @@
             labelCellNumber.Location = new Point(585, 96);
             labelCellNumber.Name = "labelCellNumber";
             labelCellNumber.Size = new Size(101, 21);
-            labelCellNumber.TabIndex = 4;
+            labelCellNumber.TabIndex = 0;
             labelCellNumber.Text = "Cell Number:";
             // 
             // textBoxFirstName
@@ -83,7 +83,7 @@
             textBoxFirstName.Name = "textBoxFirstName";
             textBoxFirstName.PlaceholderText = "First Name";
             textBoxFirstName.Size = new Size(395, 29);
-            textBoxFirstName.TabIndex = 0;
+            textBoxFirstName.TabIndex = 1;
             textBoxFirstName.TextChanged += TextBox_TextChanged;
             textBoxFirstName.Validating += textBox_Validating;
             // 
@@ -93,7 +93,7 @@
             textBoxMI.Name = "textBoxMI";
             textBoxMI.PlaceholderText = "MI";
             textBoxMI.Size = new Size(42, 29);
-            textBoxMI.TabIndex = 1;
+            textBoxMI.TabIndex = 2;
             textBoxMI.TextChanged += TextBox_TextChanged;
             textBoxMI.Validating += textBox_Validating;
             // 
@@ -103,7 +103,7 @@
             textBoxLastName.Name = "textBoxLastName";
             textBoxLastName.PlaceholderText = "Last Name";
             textBoxLastName.Size = new Size(357, 29);
-            textBoxLastName.TabIndex = 2;
+            textBoxLastName.TabIndex = 3;
             textBoxLastName.TextChanged += TextBox_TextChanged;
             textBoxLastName.Validating += textBox_Validating;
             // 
@@ -127,7 +127,7 @@
             textBoxEmail.Name = "textBoxEmail";
             textBoxEmail.PlaceholderText = "Email";
             textBoxEmail.Size = new Size(255, 29);
-            textBoxEmail.TabIndex = 5;
+            textBoxEmail.TabIndex = 8;
             textBoxEmail.TextChanged += TextBox_TextChanged;
             textBoxEmail.Validating += textBox_Validating;
             // 
@@ -136,7 +136,7 @@
             ButtonSearch.Location = new Point(1001, 12);
             ButtonSearch.Name = "ButtonSearch";
             ButtonSearch.Size = new Size(120, 32);
-            ButtonSearch.TabIndex = 6;
+            ButtonSearch.TabIndex = 11;
             ButtonSearch.Text = "Search";
             ButtonSearch.UseVisualStyleBackColor = true;
             ButtonSearch.Click += ButtonSearch_Click;
@@ -153,7 +153,8 @@
             dataGridViewResults.RowTemplate.Height = 29;
             dataGridViewResults.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewResults.Size = new Size(1261, 562);
-            dataGridViewResults.TabIndex = 7;
+            dataGridViewResults.TabIndex = 0;
+            dataGridViewResults.TabStop = false;
             dataGridViewResults.CellClick += dataGridViewResults_CellClick;
             dataGridViewResults.CellContentClick += dataGridViewResults_CellContentClick;
             // 
@@ -167,7 +168,7 @@
             maskedTextBoxPhoneNumber.Mask = "(999) 000-0000";
             maskedTextBoxPhoneNumber.Name = "maskedTextBoxPhoneNumber";
             maskedTextBoxPhoneNumber.Size = new Size(137, 29);
-            maskedTextBoxPhoneNumber.TabIndex = 3;
+            maskedTextBoxPhoneNumber.TabIndex = 9;
             // 
             // maskedTextBoxCellNumber
             // 
@@ -175,14 +176,14 @@
             maskedTextBoxCellNumber.Mask = "(999) 999-9999";
             maskedTextBoxCellNumber.Name = "maskedTextBoxCellNumber";
             maskedTextBoxCellNumber.Size = new Size(132, 29);
-            maskedTextBoxCellNumber.TabIndex = 4;
+            maskedTextBoxCellNumber.TabIndex = 10;
             // 
             // ButtonClear
             // 
             ButtonClear.Location = new Point(1001, 48);
             ButtonClear.Name = "ButtonClear";
             ButtonClear.Size = new Size(120, 34);
-            ButtonClear.TabIndex = 8;
+            ButtonClear.TabIndex = 12;
             ButtonClear.Text = "Refresh";
             ButtonClear.UseVisualStyleBackColor = true;
             ButtonClear.Click += ButtonClear_Click;
@@ -193,7 +194,7 @@
             textBoxStreetAddress.Name = "textBoxStreetAddress";
             textBoxStreetAddress.PlaceholderText = "Street Address";
             textBoxStreetAddress.Size = new Size(395, 29);
-            textBoxStreetAddress.TabIndex = 9;
+            textBoxStreetAddress.TabIndex = 4;
             textBoxStreetAddress.TextChanged += TextBox_TextChanged;
             // 
             // textBoxCity
@@ -202,7 +203,7 @@
             textBoxCity.Name = "textBoxCity";
             textBoxCity.PlaceholderText = "City";
             textBoxCity.Size = new Size(212, 29);
-            textBoxCity.TabIndex = 10;
+            textBoxCity.TabIndex = 5;
             textBoxCity.TextChanged += TextBox_TextChanged;
             // 
             // comboBoxState
@@ -210,7 +211,7 @@
             comboBoxState.Location = new Point(763, 58);
             comboBoxState.Name = "comboBoxState";
             comboBoxState.Size = new Size(54, 29);
-            comboBoxState.TabIndex = 11;
+            comboBoxState.TabIndex = 6;
             // 
             // textBoxZipCode
             // 
@@ -218,7 +219,7 @@
             textBoxZipCode.Name = "textBoxZipCode";
             textBoxZipCode.PlaceholderText = "Zip Code";
             textBoxZipCode.Size = new Size(100, 29);
-            textBoxZipCode.TabIndex = 12;
+            textBoxZipCode.TabIndex = 7;
             textBoxZipCode.TextChanged += TextBox_TextChanged;
             textBoxZipCode.KeyPress += TextBoxZipCode_KeyPress;
             // 
@@ -228,7 +229,7 @@
             lblState.Location = new Point(710, 61);
             lblState.Name = "lblState";
             lblState.Size = new Size(47, 21);
-            lblState.TabIndex = 13;
+            lblState.TabIndex = 0;
             lblState.Text = "State:";
             lblState.Click += label1_Click;
             // 
@@ -257,7 +258,7 @@
             ButtonEdit.Location = new Point(1152, 8);
             ButtonEdit.Name = "ButtonEdit";
             ButtonEdit.Size = new Size(120, 41);
-            ButtonEdit.TabIndex = 16;
+            ButtonEdit.TabIndex = 13;
             ButtonEdit.Text = "Save";
             ButtonEdit.UseVisualStyleBackColor = true;
             ButtonEdit.Click += ButtonEdit_Click;
