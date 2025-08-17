@@ -99,9 +99,10 @@ namespace PeopleSearch
                 var peopleService = scope.ServiceProvider.GetRequiredService<IPeopleService>();
                 var addressService = scope.ServiceProvider.GetRequiredService<IAddressService>();
                 var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-                var form1 = new Form1(stateService, peopleService,addressService, config);
-                form1.ShowDialog();
-                System.Windows.Forms.Application.Run(form1);
+                var peopleSearchForm = new PeopleSearchForm(stateService, peopleService,addressService, config);
+                // Comment out to check for any processing before handling form events
+                // peopleSearchForm.ShowDialog();
+                System.Windows.Forms.Application.Run(peopleSearchForm);
             }
         }
     }

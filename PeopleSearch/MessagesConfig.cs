@@ -11,5 +11,6 @@ public class MessagesConfig
   public string DuplicateRecord { get; set; } = "A matching person already exists.";
     public string AddressError { get; set; } = "Failed to retrieve or create the address.";
     public string ValidateError { get; set; } = "Validation Error.";
+    public string ConfirmExit { get; set; } = "Are you sure you want to exit?";
 
 }

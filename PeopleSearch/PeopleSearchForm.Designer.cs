@@ -1,7 +1,7 @@
 ﻿namespace PeopleSearch
 
 {
-    partial class Form1
+    partial class PeopleSearchForm
     {
         private System.Windows.Forms.MaskedTextBox maskedTextBoxPhoneNumber;
         private System.Windows.Forms.MaskedTextBox maskedTextBoxCellNumber;
@@ -287,9 +287,9 @@
             Controls.Add(textBoxEmail);
             Controls.Add(ButtonSearch);
             Controls.Add(dataGridViewResults);
-            Name = "Form1";
+            Name = "PeopleSearchForm";
             Text = "Person Search";
-            Load += Form1_Load;
+            Load += PeopleSearchForm_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridViewResults).EndInit();
             ((System.ComponentModel.ISupportInitialize)errorProvider).EndInit();
             ResumeLayout(false);
