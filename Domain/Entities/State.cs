@@ -2,14 +2,13 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Interface;
 
-public class State : IState
+namespace Domain.Entities
 {
-    public int StateId { get; set; }
+    public class State
+    {
+        public int StateId { get; set; }
 
-    [Required]
-    public string StateName { get; set; }
-
-    [Required]
-    [StringLength(2, MinimumLength = 2, ErrorMessage = "StateAbbr must be exactly 2 characters.")]
-    public string StateAbbr { get; set; }
+        public string StateName { get; set; }
+        public string StateAbbr { get; set; }
+    }
 }

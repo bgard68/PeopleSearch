@@ -17,7 +17,7 @@ namespace Infrastructure.Migrations
                     StateId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StateName = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    StateAbbr = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false)
+                    StateAbbr = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,7 +43,7 @@ namespace Infrastructure.Migrations
                         column: x => x.StateId,
                         principalTable: "States",
                         principalColumn: "StateId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -53,7 +53,7 @@ namespace Infrastructure.Migrations
                     PersonId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MI = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: false),
+                    MI = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CellNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -68,7 +68,7 @@ namespace Infrastructure.Migrations
                         column: x => x.AddressId,
                         principalTable: "Addresses",
                         principalColumn: "AddressId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

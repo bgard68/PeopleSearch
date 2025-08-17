@@ -1,14 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Domain.Entities
+﻿namespace Application.DTOs
 {
-    public class Address 
+    public class AddressDto
     {
         public int AddressId { get; set; }
         public string StreetAddress { get; set; }
         public string City { get; set; }
         public int StateId { get; set; }
         public string ZipCode { get; set; }
-        public State State { get; set; } // Navigation property
+        public StateDto State { get; set; }
     }
 }

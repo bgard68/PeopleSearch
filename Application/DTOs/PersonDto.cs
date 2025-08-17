@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
-
-namespace Domain.Entities
+﻿namespace Application.DTOs
 {
-    public class Person
+    public class PersonDto
     {
         public int PersonId { get; set; }
         public string FirstName { get; set; }
@@ -18,7 +10,6 @@ namespace Domain.Entities
         public string? CellNumber { get; set; }
         public string Email { get; set; }
         public int AddressId { get; set; }
-        public Address Address { get; set; }
+        public AddressDto Address { get; set; }
     }
 }
-

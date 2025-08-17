@@ -1,6 +1,6 @@
-using Domain.Interface;
-using Domain.Entities;
 using Application.Interfaces;
+using Application.DTOs;
+using Application.Mapping;
 
 namespace Application.Services
 {
@@ -13,36 +13,41 @@ namespace Application.Services
             _addressRepository = addressRepository;
         }
 
-        public IEnumerable<Address> SearchAddress(string streetName, string cityName, int stateId, string zipCode)
+        public IEnumerable<AddressDto> SearchAddress(string streetName, string cityName, int stateId, string zipCode)
         {
-            return _addressRepository.SearchAddress(streetName, cityName, stateId, zipCode);
-        }
-      
-
-        public Address? GetAddressById(int id)
-        {
-            return _addressRepository.GetAddressById(id);
+            var addresses = _addressRepository.SearchAddress(streetName, cityName, stateId, zipCode);
+            return addresses.Select(AddressMapping.ToDto).ToList();
         }
 
-        public IEnumerable<Address> GetAllAddresses()
+        public AddressDto? GetAddressById(int id)
         {
-            return _addressRepository.GetAllAddresses();
+            var address = _addressRepository.GetAddressById(id);
+            return address != null ? AddressMapping.ToDto(address) : null;
         }
-        public (bool Success, string Message) AddAddress(Address address)
+
+        public IEnumerable<AddressDto> GetAllAddresses()
         {
-            if (string.IsNullOrWhiteSpace(address.StreetAddress) ||
-        string.IsNullOrWhiteSpace(address.City) ||
-        address.StateId == 0 ||
-        string.IsNullOrWhiteSpace(address.ZipCode))
+            var addresses = _addressRepository.GetAllAddresses();
+            return addresses.Select(AddressMapping.ToDto).ToList();
+        }
+
+        public (bool Success, string Message) AddAddress(AddressDto addressDto)
+        {
+            if (string.IsNullOrWhiteSpace(addressDto.StreetAddress) ||
+                string.IsNullOrWhiteSpace(addressDto.City) ||
+                addressDto.StateId == 0 ||
+                string.IsNullOrWhiteSpace(addressDto.ZipCode))
             {
                 return (false, "All required fields must be provided.");
             }
+            var address = AddressMapping.ToEntity(addressDto);
             _addressRepository.AddAddress(address);
             return (true, "Address added successfully.");
         }
 
-        public void UpdateAddress(Address address)
+        public void UpdateAddress(AddressDto addressDto)
         {
+            var address = AddressMapping.ToEntity(addressDto);
             _addressRepository.UpdateAddress(address);
         }
 
