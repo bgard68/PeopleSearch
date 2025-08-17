@@ -659,6 +659,12 @@ namespace PeopleSearch
         {
             var states = _stateService.GetStates()
                 .OrderBy(s => s.StateName)
+                .Select(s => new StateDto
+                {
+                    StateId = s.StateId,
+                    StateName = s.StateName,
+                    StateAbbr = s.StateAbbr
+                })
                 .ToList();
 
             comboBoxState.DataSource = states;
