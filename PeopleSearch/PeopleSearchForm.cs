@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace PeopleSearch
 {
-    public partial class Form1 : Form
+    public partial class PeopleSearchForm : Form
     {
         #region Fields
 
@@ -26,7 +26,7 @@ namespace PeopleSearch
         /// <summary>
         /// Initializes the form, sets up services, configures DataGridView, and wires up events.
         /// </summary>
-        public Form1(IStateService stateService, IPeopleService peopleService, IAddressService addressService, IConfiguration configuration)
+        public PeopleSearchForm(IStateService stateService, IPeopleService peopleService, IAddressService addressService, IConfiguration configuration)
         {
             _stateService = stateService;
             _peopleService = peopleService;
@@ -113,7 +113,7 @@ namespace PeopleSearch
         /// <summary>
         /// Loads initial data and handles database errors on form load.
         /// </summary>
-        private void Form1_Load(object sender, EventArgs e)
+        private void PeopleSearchForm_Load(object sender, EventArgs e)
         {
             try
             {
@@ -141,7 +141,19 @@ namespace PeopleSearch
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             this.AutoValidate = AutoValidate.Disable;
+
+            var result = MessageBox.Show(
+                 _messages.ConfirmExit,
+                 "Confirm Exit",
+                 MessageBoxButtons.YesNo,
+                 MessageBoxIcon.Question);
+
+            if (result == DialogResult.No)
+            {
+                e.Cancel = true;
+            }
             base.OnFormClosing(e);
+
         }
 
         #endregion
