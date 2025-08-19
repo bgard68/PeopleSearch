@@ -48,8 +48,21 @@ namespace Infrastructure.Repositories
 
         public void UpdateAddress(Address address)
         {
-            _context.Addresses.Update(address);
-            _context.SaveChanges();
+            var tracked = _context.Addresses
+                .Include(a => a.State)
+                .FirstOrDefault(a => a.AddressId == address.AddressId);
+
+            if (tracked != null)
+            {
+                // Update properties on the tracked entity
+                tracked.StreetAddress = address.StreetAddress;
+                tracked.City = address.City;
+                tracked.StateId = address.StateId;
+                tracked.ZipCode = address.ZipCode;
+                tracked.State = address.State; // If you want to update State navigation
+
+                _context.SaveChanges();
+            }
         }
 
         public void DeleteAddress(int id)

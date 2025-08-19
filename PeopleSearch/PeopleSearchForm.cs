@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace PeopleSearch
 {
@@ -119,6 +120,7 @@ namespace PeopleSearch
             {
                 LoadAllPeople();
                 LoadStates();
+                UpdateButtonStates();
             }
             catch (Microsoft.Data.SqlClient.SqlException ex)
             {
@@ -350,10 +352,20 @@ namespace PeopleSearch
 
             if (match != null)
             {
-                personId = match.PersonId;
-                _peopleService.DeletePerson(personId);
-                MessageBox.Show(_messages.PersonDeletedSuccess, "Delete", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                ClearInputFields();
+                // Ask for confirmation before deleting
+                var confirmResult = MessageBox.Show(
+                    "Are you sure you want to delete this person?",
+                    "Confirm Delete",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (confirmResult == DialogResult.Yes)
+                {
+                    personId = match.PersonId;
+                    _peopleService.DeletePerson(personId);
+                    MessageBox.Show(_messages.PersonDeletedSuccess, "Delete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ClearInputFields();
+                }
             }
             else
             {
@@ -374,7 +386,126 @@ namespace PeopleSearch
         /// </summary>
         private void ButtonEdit_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Edit functionality is not yet implemented.", "Edit", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // MessageBox.Show("Edit functionality is not yet implemented.", "Edit", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+            // 1. Check if a record is selected
+            if (dataGridViewResults.CurrentRow == null || dataGridViewResults.CurrentRow.DataBoundItem == null)
+            {
+                MessageBox.Show(_messages.NoMatchingRecords, "Edit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var person = (PersonDto)dataGridViewResults.CurrentRow.DataBoundItem;
+
+            // 2. Validate required fields
+            string firstName = textBoxFirstName.Text.Trim();
+            string lastName = textBoxLastName.Text.Trim();
+            string streetAddress = textBoxStreetAddress.Text.Trim();
+            string city = textBoxCity.Text.Trim();
+            int stateId = comboBoxState.SelectedValue is int id ? id : 0;
+            string zipCode = textBoxZipCode.Text.Trim();
+            string email = textBoxEmail.Text.Trim();
+            string phoneNumber = maskedTextBoxPhoneNumber.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(firstName) ||
+                string.IsNullOrWhiteSpace(lastName) ||
+                string.IsNullOrWhiteSpace(streetAddress) ||
+                string.IsNullOrWhiteSpace(city) ||
+                stateId == 0 ||
+                string.IsNullOrWhiteSpace(zipCode) ||
+                string.IsNullOrWhiteSpace(email) ||
+                string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                MessageBox.Show(_messages.ValidateError, "Edit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 3. Check address existence
+            var existingAddresses = _addressService.SearchAddress(streetAddress, city, stateId, zipCode).ToList();
+            AddressDto addressToUse;
+
+            if (existingAddresses.Any())
+            {
+                addressToUse = existingAddresses.First();
+                // Check if other people use this address
+                var peopleWithAddress = _peopleService.GetAllPeople().Where(p => p.AddressId == addressToUse.AddressId && p.PersonId != person.PersonId).ToList();
+
+                if (!peopleWithAddress.Any())
+                {
+                    // No other people use it, update the address
+                    addressToUse.StreetAddress = streetAddress;
+                    addressToUse.City = city;
+                    addressToUse.StateId = stateId;
+                    addressToUse.ZipCode = zipCode;
+                    _addressService.UpdateAddress(addressToUse);
+                }
+                else
+                {
+                    // Other people use it, check for a match
+                    var match = existingAddresses.FirstOrDefault(a =>
+                        a.StreetAddress == streetAddress &&
+                        a.City == city &&
+                        a.StateId == stateId &&
+                        a.ZipCode == zipCode);
+
+                    if (match == null)
+                    {
+                        // No match found, add new address
+                        var newAddress = new AddressDto
+                        {
+                            StreetAddress = streetAddress,
+                            City = city,
+                            StateId = stateId,
+                            ZipCode = zipCode
+                        };
+                        var result = _addressService.AddAddress(newAddress);
+                        if (!result.Success)
+                        {
+                            MessageBox.Show(_messages.AddressError, "Edit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                        addressToUse = _addressService.SearchAddress(streetAddress, city, stateId, zipCode).FirstOrDefault();
+                    }
+                    else
+                    {
+                        // Match found, update address id in person
+                        addressToUse = match;
+                    }
+                }
+            }
+            else
+            {
+                // Address does not exist, add it
+                var newAddress = new AddressDto
+                {
+                    StreetAddress = streetAddress,
+                    City = city,
+                    StateId = stateId,
+                    ZipCode = zipCode
+                };
+                var result = _addressService.AddAddress(newAddress);
+                if (!result.Success)
+                {
+                    MessageBox.Show(_messages.AddressError, "Edit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                addressToUse = _addressService.SearchAddress(streetAddress, city, stateId, zipCode).FirstOrDefault();
+            }
+
+            // Update person record
+            person.FirstName = firstName;
+            person.LastName = lastName;
+            person.Email = email;
+            person.PhoneNumber = phoneNumber;
+            person.AddressId = addressToUse.AddressId;
+            person.Address = addressToUse;
+
+            _peopleService.UpdatePerson(person);
+
+            MessageBox.Show("Person updated successfully.", "Edit", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            LoadAllPeople();
+
         }
 
         #endregion
@@ -438,7 +569,9 @@ namespace PeopleSearch
         private void comboBoxState_SelectedIndexChanged(object? sender, EventArgs e)
         {
             // Reserved for future use
+            UpdateButtonStates();
         }
+
 
         /// <summary>
         /// Reserved for future use (label click).
@@ -545,6 +678,8 @@ namespace PeopleSearch
             textBoxCity.Text = string.Empty;
             textBoxZipCode.Text = string.Empty;
             comboBoxState.SelectedIndex = -1;
+            dataGridViewResults.ClearSelection();
+            UpdateButtonStates();
         }
 
         /// <summary>
@@ -561,19 +696,113 @@ namespace PeopleSearch
         /// </summary>
         private void UpdateButtonStates()
         {
-            bool allFieldsFilled =
-                !string.IsNullOrWhiteSpace(textBoxFirstName.Text) &&
-                !string.IsNullOrWhiteSpace(textBoxLastName.Text) &&
-                !string.IsNullOrWhiteSpace(textBoxEmail.Text) &&
-                !string.IsNullOrWhiteSpace(maskedTextBoxPhoneNumber.Text) &&
-                !string.IsNullOrWhiteSpace(textBoxStreetAddress.Text) &&
-                !string.IsNullOrWhiteSpace(textBoxCity.Text) &&
-                comboBoxState.SelectedItem != null &&
-                !string.IsNullOrWhiteSpace(textBoxZipCode.Text);
+
+
+            var requiredTextBoxes = new[]
+  {
+        textBoxFirstName,
+        textBoxLastName,
+        textBoxStreetAddress,
+        textBoxCity,
+        textBoxZipCode,
+        textBoxEmail
+    };
+
+            bool allFieldsFilled = true;
+
+            foreach (var tb in requiredTextBoxes)
+            {
+                string placeholder = tb.Tag as string ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(tb.Text) || tb.Text == placeholder)
+                {
+                    allFieldsFilled = false;
+                    break;
+                }
+            }
+
+            // Phone number: check mask is filled
+            if (!maskedTextBoxPhoneNumber.MaskFull)
+                allFieldsFilled = false;
+
+            // State: check selection
+            if (comboBoxState.SelectedItem == null)
+                allFieldsFilled = false;
+
+            // bool recordSelected = dataGridViewResults.CurrentRow != null && dataGridViewResults.CurrentRow.DataBoundItem != null;
+
+            //        bool allFieldsFilled =
+            //!string.IsNullOrWhiteSpace(textBoxFirstName.Text) &&
+            //textBoxFirstName.Text != textBoxFirstName.PlaceholderText &&
+            //!string.IsNullOrWhiteSpace(textBoxLastName.Text) &&
+            //textBoxLastName.Text != textBoxLastName.PlaceholderText &&
+            //!string.IsNullOrWhiteSpace(textBoxStreetAddress.Text) &&
+            //textBoxStreetAddress.Text != textBoxStreetAddress.PlaceholderText &&
+            //!string.IsNullOrWhiteSpace(textBoxCity.Text) &&
+            //textBoxCity.Text != textBoxCity.PlaceholderText &&
+            //!string.IsNullOrWhiteSpace(textBoxZipCode.Text) &&
+            //textBoxZipCode.Text != textBoxZipCode.PlaceholderText &&
+            //!string.IsNullOrWhiteSpace(textBoxEmail.Text) &&
+            //textBoxEmail.Text != textBoxEmail.PlaceholderText &&
+            //!string.IsNullOrWhiteSpace(maskedTextBoxPhoneNumber.Text) &&
+            //comboBoxState.SelectedItem != null;
+
+            //bool allFieldsFilled =
+            //    !string.IsNullOrWhiteSpace(textBoxFirstName.Text) &&
+            //    !string.IsNullOrWhiteSpace(textBoxLastName.Text) &&
+            //    !string.IsNullOrWhiteSpace(textBoxEmail.Text) &&
+            //    !string.IsNullOrWhiteSpace(maskedTextBoxPhoneNumber.Text) &&
+            //    !string.IsNullOrWhiteSpace(textBoxStreetAddress.Text) &&
+            //    !string.IsNullOrWhiteSpace(textBoxCity.Text) &&
+            //    comboBoxState.SelectedItem != null &&
+            //    !string.IsNullOrWhiteSpace(textBoxZipCode.Text);
 
             ButtonAdd.Enabled = allFieldsFilled;
+            ButtonDelete.Enabled = allFieldsFilled;
             ButtonEdit.Enabled = allFieldsFilled;
+            UpdateFieldBorders();
         }
+
+
+        private void UpdateFieldBorders()
+        {
+            // First Name
+            textBoxFirstName.BackColor = string.IsNullOrWhiteSpace(textBoxFirstName.Text)
+                ? Color.MistyRose : SystemColors.Window;
+
+            // Last Name
+            textBoxLastName.BackColor = string.IsNullOrWhiteSpace(textBoxLastName.Text)
+                ? Color.MistyRose : SystemColors.Window;
+
+            // Street Address
+            textBoxStreetAddress.BackColor = string.IsNullOrWhiteSpace(textBoxStreetAddress.Text)
+                ? Color.MistyRose : SystemColors.Window;
+
+            // City
+            textBoxCity.BackColor = string.IsNullOrWhiteSpace(textBoxCity.Text)
+                ? Color.MistyRose : SystemColors.Window;
+
+
+            // State (ComboBox) - robust check
+            var selectedState = comboBoxState.SelectedItem as StateDto;
+            if (selectedState != null && selectedState.StateId > 0)
+                comboBoxState.BackColor = SystemColors.Window;
+            else
+                comboBoxState.BackColor = Color.MistyRose;
+
+            // Zip
+            textBoxZipCode.BackColor = string.IsNullOrWhiteSpace(textBoxZipCode.Text)
+                ? Color.MistyRose : SystemColors.Window;
+
+
+            // Email
+            textBoxEmail.BackColor = string.IsNullOrWhiteSpace(textBoxEmail.Text)
+                ? Color.MistyRose : SystemColors.Window;
+
+            // Phone (masked)
+            maskedTextBoxPhoneNumber.BackColor = !maskedTextBoxPhoneNumber.MaskFull
+                ? Color.MistyRose : SystemColors.Window;
+
+                  }
 
         /// <summary>
         /// Populates form fields with the selected person's data.
@@ -682,6 +911,7 @@ namespace PeopleSearch
             comboBoxState.DataSource = states;
             comboBoxState.DisplayMember = "StateAbbr";
             comboBoxState.ValueMember = "StateId";
+            comboBoxState.SelectedIndex = -1;
         }
 
         /// <summary>
