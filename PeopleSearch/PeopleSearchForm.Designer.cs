@@ -259,11 +259,11 @@
             ButtonEdit.Name = "ButtonEdit";
             ButtonEdit.Size = new Size(120, 41);
             ButtonEdit.TabIndex = 13;
-            ButtonEdit.Text = "Save";
+            ButtonEdit.Text = "Edit";
             ButtonEdit.UseVisualStyleBackColor = true;
             ButtonEdit.Click += ButtonEdit_Click;
             // 
-            // Form1
+            // PeopleSearchForm
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
