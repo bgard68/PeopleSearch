@@ -1,6 +1,8 @@
-﻿namespace Application.DTOs
+﻿using Application.DTOs.Interfaces;
+
+namespace Application.DTOs
 {
-    public class AddressDto
+    public class HomeAddressDto : IAddressDto
     {
         public int AddressId { get; set; }
         public string StreetAddress { get; set; }

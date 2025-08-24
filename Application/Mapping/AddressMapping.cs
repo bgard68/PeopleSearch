@@ -1,14 +1,15 @@
 ﻿using Domain.Entities;
 using Application.DTOs;
+using Application.DTOs.Interfaces;
 
 namespace Application.Mapping
 {
     public static class AddressMapping
     {
-        public static AddressDto ToDto(Address address)
+        public static HomeAddressDto ToDto(Address address)
         {
             if (address == null) return null;
-            return new AddressDto
+            return new HomeAddressDto
             {
                 AddressId = address.AddressId,
                 StreetAddress = address.StreetAddress,
@@ -19,7 +20,7 @@ namespace Application.Mapping
             };
         }
 
-        public static Address ToEntity(AddressDto dto)
+        public static Address ToEntity(IAddressDto dto)
         {
             if (dto == null) return null;
             return new Address

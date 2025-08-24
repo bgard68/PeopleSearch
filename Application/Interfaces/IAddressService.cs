@@ -6,12 +6,12 @@ namespace Application.Interfaces
 {
     public interface IAddressService
     {
-        IEnumerable<AddressDto> SearchAddress(string streetName, string cityName, int stateId, string zipCode);
-        AddressDto? GetAddressById(int id);
+        IEnumerable<HomeAddressDto> SearchAddress(string streetName, string cityName, int stateId, string zipCode);
+        HomeAddressDto? GetAddressById(int id);
 
-        IEnumerable<AddressDto> GetAllAddresses();
-        (bool Success, string Message) AddAddress(AddressDto address);
-        void UpdateAddress(AddressDto address); // Add this line
+        IEnumerable<HomeAddressDto> GetAllAddresses();
+        (bool Success, string Message) AddAddress(HomeAddressDto address);
+        void UpdateAddress(HomeAddressDto address); // Add this line
         void DeleteAddress(int id); // Add this line
 
 

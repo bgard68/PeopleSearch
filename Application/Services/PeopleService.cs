@@ -1,7 +1,9 @@
 using Application.DTOs;
 using Application.Interfaces;
 using Application.Mapping;
-using Domain.Entities;
+using Domain.Interface;
+using Domain.Entities; 
+
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
