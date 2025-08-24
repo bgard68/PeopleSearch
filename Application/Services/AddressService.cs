@@ -1,6 +1,7 @@
 using Application.Interfaces;
 using Application.DTOs;
 using Application.Mapping;
+using Domain.Interface; 
 
 namespace Application.Services
 {
@@ -13,25 +14,25 @@ namespace Application.Services
             _addressRepository = addressRepository;
         }
 
-        public IEnumerable<AddressDto> SearchAddress(string streetName, string cityName, int stateId, string zipCode)
+        public IEnumerable<HomeAddressDto> SearchAddress(string streetName, string cityName, int stateId, string zipCode)
         {
             var addresses = _addressRepository.SearchAddress(streetName, cityName, stateId, zipCode);
-            return addresses.Select(AddressMapping.ToDto).ToList();
+            return addresses.Select(a => (HomeAddressDto)AddressMapping.ToDto(a)).ToList();
         }
 
-        public AddressDto? GetAddressById(int id)
+        public HomeAddressDto? GetAddressById(int id)
         {
             var address = _addressRepository.GetAddressById(id);
-            return address != null ? AddressMapping.ToDto(address) : null;
+            return address != null ? (HomeAddressDto)AddressMapping.ToDto(address) : null;
         }
 
-        public IEnumerable<AddressDto> GetAllAddresses()
+        public IEnumerable<HomeAddressDto> GetAllAddresses()
         {
             var addresses = _addressRepository.GetAllAddresses();
-            return addresses.Select(AddressMapping.ToDto).ToList();
+            return addresses.Select(a => (HomeAddressDto)AddressMapping.ToDto(a)).ToList();
         }
 
-        public (bool Success, string Message) AddAddress(AddressDto addressDto)
+        public (bool Success, string Message) AddAddress(HomeAddressDto addressDto)
         {
             if (string.IsNullOrWhiteSpace(addressDto.StreetAddress) ||
                 string.IsNullOrWhiteSpace(addressDto.City) ||
@@ -45,7 +46,7 @@ namespace Application.Services
             return (true, "Address added successfully.");
         }
 
-        public void UpdateAddress(AddressDto addressDto)
+        public void UpdateAddress(HomeAddressDto addressDto)
         {
             var address = AddressMapping.ToEntity(addressDto);
             _addressRepository.UpdateAddress(address);

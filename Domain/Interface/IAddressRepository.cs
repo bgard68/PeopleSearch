@@ -1,5 +1,6 @@
 using Domain.Entities;
 
+namespace Domain.Interface { 
 public interface IAddressRepository
 {
     IEnumerable<Address> SearchAddress(string streetName, string cityName, int stateId, string zipCode);
@@ -9,3 +10,4 @@ public interface IAddressRepository
     void UpdateAddress(Address address);
     void DeleteAddress(int id);
 }
+    }

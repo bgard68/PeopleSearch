@@ -423,7 +423,7 @@ namespace PeopleSearch
 
             // 3. Check address existence
             var existingAddresses = _addressService.SearchAddress(streetAddress, city, stateId, zipCode).ToList();
-            AddressDto addressToUse;
+            HomeAddressDto addressToUse;
 
             if (existingAddresses.Any())
             {
@@ -452,7 +452,7 @@ namespace PeopleSearch
                     if (match == null)
                     {
                         // No match found, add new address
-                        var newAddress = new AddressDto
+                        var newAddress = new HomeAddressDto
                         {
                             StreetAddress = streetAddress,
                             City = city,
@@ -477,7 +477,7 @@ namespace PeopleSearch
             else
             {
                 // Address does not exist, add it
-                var newAddress = new AddressDto
+                var newAddress = new HomeAddressDto
                 {
                     StreetAddress = streetAddress,
                     City = city,
@@ -816,7 +816,7 @@ namespace PeopleSearch
             maskedTextBoxCellNumber.Text = person.CellNumber;
             textBoxEmail.Text = person.Email;
 
-            AddressDto address = person.Address;
+            HomeAddressDto address = person.Address;
             if (address == null && person.AddressId != 0)
             {
                 address = _addressService.GetAddressById(person.AddressId);
@@ -917,7 +917,7 @@ namespace PeopleSearch
         /// <summary>
         /// Finds an existing address or creates a new one.
         /// </summary>
-        private AddressDto? GetOrCreateAddress(string streetAddress, string city, int stateId, string zipCode)
+        private HomeAddressDto? GetOrCreateAddress(string streetAddress, string city, int stateId, string zipCode)
         {
             var existingAddresses = _addressService.SearchAddress(streetAddress, city, stateId, zipCode).ToList();
             if (existingAddresses.Any())
@@ -925,7 +925,7 @@ namespace PeopleSearch
                 return existingAddresses.First();
             }
 
-            var newAddress = new AddressDto
+            var newAddress = new HomeAddressDto
             {
                 StreetAddress = streetAddress,
                 City = city,

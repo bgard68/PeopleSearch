@@ -10,6 +10,6 @@
         public string? CellNumber { get; set; }
         public string Email { get; set; }
         public int AddressId { get; set; }
-        public AddressDto Address { get; set; }
+        public HomeAddressDto Address { get; set; }
     }
 }

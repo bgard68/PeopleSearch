@@ -1,12 +1,11 @@
 using Application.Interfaces;
 using Application.Services;
-using Infrastructure.Data;
-using Infrastructure.Repositories;  
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Windows.Forms;
+using Infrastructure;
 
 namespace PeopleSearch
 {
@@ -54,16 +53,12 @@ namespace PeopleSearch
             // serviceCollection.AddDbContext<AppDbContext>(options =>
             //     options.UseSqlite(connectionString));
 
+            serviceCollection.AddInfrastructureServices();
+
             // Register State Service
-            serviceCollection.AddScoped<IStateRepository, StateRepository>();
-            serviceCollection.AddScoped<IStateService, StateService>();
-
-                  
-            // Assuming PeopleService requires AppDbContext in its constructor
-            serviceCollection.AddScoped<IPeopleRepository, PeopleRepository>();
+         
+            serviceCollection.AddScoped<IStateService, StateService>();                
             serviceCollection.AddScoped<IPeopleService, PeopleService>();
-
-            serviceCollection.AddScoped<IAddressRepository, AddressRepository>();
             serviceCollection.AddScoped<IAddressService, AddressService>();
 
             // 3. Build the Service Provider
@@ -78,12 +73,16 @@ namespace PeopleSearch
                 // This will create the database if it does not exist and apply any pending migrations
                 // Be sure that you do not already have an existing database defined in the connection string!!!
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                
-                // Only run migrations if the database does not exist
-                if (!dbContext.Database.CanConnect())
-                {
-                    dbContext.Database.Migrate();
-                }
+
+                //// Only run migrations if the database does not exist
+                //if (!dbContext.Database.CanConnect())
+                //{
+                //    dbContext.Database.Migrate();
+                //}
+                // Instead, call the Infrastructure helper:
+                Infrastructure.DatabaseInitializer
+                    .EnsureDatabaseCreatedAndSeededAsync(dbContext, AppContext.BaseDirectory)
+                    .GetAwaiter().GetResult();
 
                 // Import states from CSV file
                 dbContext.ImportStatesFromCsvAsync(Path.Combine(AppContext.BaseDirectory, "states.csv")).GetAwaiter().GetResult();
